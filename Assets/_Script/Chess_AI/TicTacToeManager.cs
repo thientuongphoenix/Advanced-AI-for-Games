@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class TicTacToeManager : MonoBehaviour
 {
-    public GameObject cellPrefab;
-    public Transform boardParent;
-    public int boardSize;
+    public GameObject cellPrefab; //Prefab nút bấm
+    public Transform boardParent; //Panel
+    public int boardSize; //Kích thước bàn cờ 10x10
 
-    private string[,] board;
-    public List<ButtonCell> cells = new List<ButtonCell>();
+    private string[,] board; //Mảng 2 chiều để lưu trạng thái của bàn cờ
+    public List<ButtonCell> cells = new List<ButtonCell>(); //Danh sách các ô trong bàn cờ
 
     //Turn của người chơi
     public bool isPlayerTurn = true;
@@ -31,9 +31,9 @@ public class TicTacToeManager : MonoBehaviour
     void CreateBoard()
     {
         board = new string[boardSize, boardSize];
-        for(int i = 0; i < boardSize; i++)
+        for(int i = 0; i < boardSize; i++) //row
         {
-            for(int j = 0; j < boardSize; j++)
+            for(int j = 0; j < boardSize; j++) //col
             {
                 var go = Instantiate(cellPrefab, new Vector3(j, -i, 0), Quaternion.identity, boardParent);
                 var cell = go.GetComponent<ButtonCell>();
@@ -42,6 +42,7 @@ public class TicTacToeManager : MonoBehaviour
                 cell.ticTacToeManager = this;
                 int row = i;
                 int column = j;
+                //Đăng ký sự kiện
                 cell.GetComponent<Button>().onClick.AddListener(() => HandlePlayerMove(row, column));
                 cells.Add(cell);
             }

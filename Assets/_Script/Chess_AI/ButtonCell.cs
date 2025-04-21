@@ -10,10 +10,10 @@ public class ButtonCell : MonoBehaviour
 
     private void OnMouseDown()
     {
-        ticTacToeManager.HandlePlayerMove(row, column);
+        this.ticTacToeManager.HandlePlayerMove(this.row, this.column);
     }
 
-    public void SetSymbol()
+    public void SetSymbol(string symbol)
     {
         GetComponentInChildren<TextMeshProUGUI>().text = symbol;
     }
