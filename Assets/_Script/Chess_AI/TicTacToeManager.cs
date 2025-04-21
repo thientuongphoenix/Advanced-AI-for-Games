@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -49,10 +50,31 @@ public class TicTacToeManager : MonoBehaviour
         }
     }
 
+    //Hàm xử lý khi người chơi nhấn và ô
     public void HandlePlayerMove(int row, int column)
     {
-
+        if(!isPlayerTurn || board[row, column] != null) return;
+        //Cập nhật trạng thái bàn cờ
+        board[row,column] = "O";
+        UpdateCellUI(row, column, "O");
+        //Kiểm tra xem người chơi có chiến thắng không
     }
 
-    //void UpdateCellUI
+    void UpdateCellUI (int row, int column, string symbol)
+    {
+        //Cập nhật giao diện cho ô
+        var cell = cells.First(x => x.row == row && x.column == column);
+        cell.SetSymbol(symbol);
+
+        //Tô màu cho ô
+        var image = cell.GetComponent<Image>();
+        if(symbol == "X")
+        {
+            image.color = Color.red;
+        }
+        else if(symbol == "O")
+        {
+            image.color = Color.blue;
+        }
+    }
 }
