@@ -21,6 +21,11 @@ public class Node
         this.name = n;
     }
 
+    public virtual Status Process()
+    {
+        return Status.SUCCESS;
+    }
+
     /// <summary>
     /// Dùng để thêm Node con vào
     /// </summary>

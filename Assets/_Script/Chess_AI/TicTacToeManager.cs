@@ -83,7 +83,153 @@ public class TicTacToeManager : MonoBehaviour
     //Hàm xử lý khi máy chơi
     void PlayerAIMove()
     {
+        int stoneCount = CountStones(board);
 
+        //Độ sâu tối đa
+        int depth = stoneCount < 10 ? 4 : 3;
+
+        //Kiểm tra ngay lập tức có thắng hay không
+        var immediateMove = FindImmediateMove();
+
+        Vector2Int bestMove;
+        if(immediateMove != Vector2Int.one * -1)
+        {
+            bestMove = immediateMove;
+        }
+        else
+        {
+            var(move, _) = Minimax(board, depth, true, int.MinValue, int.MaxValue);
+            bestMove = move;
+        }
+        board[bestMove.x, bestMove.y] = "X"; //Cập nhật bàn cờ
+        UpdateCellUI(bestMove.x, bestMove.y, "X"); //Cập nhật giao diện
+
+        // kiểm tra máy có thắng hay không
+        if (CheckWin("X"))
+        {
+            Debug.Log("Máy thắng");
+        }
+        else if (IsBoardFull(board))
+        {
+            Debug.Log("Hòa");
+        }
+        else
+        {
+            isPlayerTurn = true; // đến lượt người chơi
+        }
+    }
+
+    //Thuật toán miniMax
+    (Vector2Int move, int score) Minimax(string[,] b, int depth, bool isMax, int alpha, int beta)
+    {
+        //Kiểm tra thắng thua
+        //Nếu máy thắng, trả về điểm số
+        if (CheckWin("X", b)) return (Vector2Int.zero, 1000 + depth);
+        //Nếu người chơi thắng, trả về điểm số
+        if(CheckWin("O", b)) return (Vector2Int.zero, -1000 - depth);
+        //Nếu bàn cờ đầy hoặc độ sâu tối đa đạt được, trả về điểm số
+        if(IsBoardFull(b) || depth == 0) return (Vector2Int.zero, EvaluateBoard(b));
+        //Khởi tạo biến để lưu điểm tốt nhất
+        List<Vector2Int> moves = GetSmartCandidateMoves(b);
+        Vector2Int bestMove = moves.Count > 0 ? moves[0] : Vector2Int.zero;
+        int bestScore = isMax ? int.MinValue : int.MaxValue;
+        //Duyệt qua tất cả các nước đi
+        foreach(var move in moves)
+        {
+            b[move.x, move.y] = isMax ? "X" : "O";//Giả lập nước đi
+            //Gọi đệ quy MiniMax
+            var score = Minimax(b, depth - 1, !isMax, alpha, beta).score;
+            b[move.x, move.y] = null; //Khôi phục trạng thái
+            //cập nhật điểm số tốt nhất
+            if(isMax && score > bestScore)
+            {
+                bestScore = score;
+                bestMove = move;
+                alpha = Mathf.Max(alpha, score);//Cập nhật alpha
+            }
+            else if(!isMax && score < bestScore)
+            {
+                bestScore = score;
+                bestMove= move;
+                beta = Mathf.Min(beta, score);//Cập nhật beta
+            }
+            //Cắt tỉa cây tìm kiếm
+            if(beta <= alpha)
+            {
+                break;//Không cần kiểm tra thêm
+            }
+        }
+        return(bestMove, bestScore);
+    }
+
+    //Hàm lấy các nước đi thống minh
+    List<Vector2Int> GetSmartCandidateMoves(string[,] b)
+    {
+        //Tạo danh sách các nước đi
+        List<Vector2Int> candidates = new List<Vector2Int>();
+        //Tìm nước đi đã được xem xét
+        HashSet<Vector2Int> consideredCells = new HashSet<Vector2Int>();
+
+        //Phạm vi xem xét xung quanh các quân đã đặt
+        int searchRange = 2;
+        //Tìm các ô trống xung quanh các quân đã đặt
+        for(var row = 0; row < boardSize; row++)
+        {
+            for(var col = 0; col < boardSize; col++)
+            {
+                if (b[row, col] != null) //Tìm các ô đã có quân
+                {
+                    //kiểm tra các ô xung quanh
+                    for(int dr = -searchRange; dr <= searchRange; dr++)
+                    {
+                        for(int dc = -searchRange; dc <= searchRange; dc++)
+                        {
+                            int newRow = row + dr;
+                            int newCol = col + dc;
+                            //Kiểm tra xem ô mới có nằm trong bàn cờ không
+                            if(newRow >= 0 && newRow < boardSize 
+                                && newCol >= 0 && newCol < boardSize
+                                && b[newRow,newCol] == null
+                                && !consideredCells.Contains(new Vector2Int(newRow, newCol)))
+                            {
+                                consideredCells.Add(new Vector2Int(newRow, newCol));
+                                candidates.Add(new Vector2Int(newRow, newCol));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //Nếu không có bước đi nào, chọn vị trí trung tâm
+        if(candidates.Count == 0)
+        {
+            int center = boardSize / 2;
+            if (b[center, center] == null)
+            {
+                candidates.Add(new Vector2Int(center, center));
+            }
+            else
+            {
+                //Tìm ô trống đầu tiên
+                for(int row = 0; row < boardSize; row++)
+                {
+                    for(int col = 0; col < boardSize; col++)
+                    {
+                        if(b[row, col] == null)
+                        {
+                            candidates.Add(new Vector2Int(row, col));
+                            break;
+                        }
+                    }
+                    if (candidates.Count > 0) break;
+                }
+            }
+        }
+
+        //Sắp xếp các nước đi theo thứ tự ưu tiên
+        candidates = candidates.OrderByDescending(pos => EvaluateMove(b, pos.x, pos.y)).ToList();
+
+        return candidates;
     }
 
     //Đánh giá giá trị của bàn cờ hiện tại
@@ -292,12 +438,12 @@ public class TicTacToeManager : MonoBehaviour
                         int newCol = col + dy[d] * k;
 
                         //Kiểm tra xem ô mới có nằm trong bàn cờ không
-                        if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) break;
+                        //if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) break;
 
+                        if (newRow < 0 || newRow >= boardSize ||
+                            newCol < 0 || newCol >= boardSize ||
+                            b[newRow, newCol] != symbol) break;
                         count++;
-                        ////Kiểm tra xem ô mới có cùng ký hiệu không 
-                        //if (b[newRow, newCol] == symbol) count++;
-                        //else break;
                     }
                     if(count >= winLenght)
                     {
