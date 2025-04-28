@@ -32,10 +32,13 @@ public class RobberBehavior : MonoBehaviour
         Leaf goToVan = new Leaf("Go To Van", GoToVan);
         Selector opendoor = new Selector("Open Door");
 
+        Inverter invertMoney = new Inverter("Invert Money");
+        invertMoney.AddChild(hasGotMoney);
+
         opendoor.AddChild(goToFrontDoor);
         opendoor.AddChild(goToBackDoor);
 
-        steal.AddChild(hasGotMoney);
+        steal.AddChild(invertMoney);
         steal.AddChild(opendoor); // Chọn cửa để vào
         steal.AddChild(goToDiamond);
         //steal.AddChild(goToBackDoor);
@@ -48,7 +51,7 @@ public class RobberBehavior : MonoBehaviour
 
     public Node.Status HasMoney()
     {
-        if (this.money >= 500) return Node.Status.FAILURE;
+        if (this.money < 500) return Node.Status.FAILURE;
         return Node.Status.SUCCESS;
     }
 
