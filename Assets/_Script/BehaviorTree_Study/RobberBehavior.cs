@@ -6,10 +6,14 @@ public class RobberBehavior : MonoBehaviour
     BehaviorTree tree;
     public GameObject diamond;
     public GameObject van;
+    public GameObject backdoor;
+    public GameObject frontdoor;
     NavMeshAgent agent;
 
     public enum ActionState { IDLE, WORKING};
     ActionState state = ActionState.IDLE;
+
+    Node.Status treeStatus = Node.Status.RUNNING;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,27 +21,69 @@ public class RobberBehavior : MonoBehaviour
         this.agent = GetComponent<NavMeshAgent>();
 
         this.tree = new BehaviorTree(); // root Node
-        Node steal = new Node("Steal Something");  
+        Sequence steal = new Sequence("Steal Something");  
         Leaf goToDiamond = new Leaf("Go To Diamond", GoToDiamond);
+        Leaf goToBackDoor = new Leaf("Go To BackDoor", GoToBackDoor);
+        Leaf goToFrontDoor = new Leaf("Go To FrontDoor", GoToFrontDoor);
         Leaf goToVan = new Leaf("Go To Van", GoToVan);
+        Selector opendoor = new Selector("Open Door");
 
+        opendoor.AddChild(goToFrontDoor);
+        opendoor.AddChild(goToBackDoor);
+
+        steal.AddChild(opendoor); // Chọn cửa để vào
         steal.AddChild(goToDiamond);
+        //steal.AddChild(goToBackDoor);
         steal.AddChild(goToVan);
         this.tree.AddChild(steal);
         //root Node (tree) -> steal something -> ( 1. Go to diamond; 2. Go to van)
 
         tree.PrintTree();
-
-        tree.Process();
     }
 
     public Node.Status GoToDiamond()
     {
-        return this.GotoLocation(this.diamond.transform.position);
+        Node.Status s = GotoLocation(this.diamond.transform.position);
+        if (s == Node.Status.SUCCESS)
+        {
+            if (diamond != null)
+            {
+                diamond.transform.parent = this.gameObject.transform; // Lôi viên kim cương theo luôn
+                return Node.Status.SUCCESS;
+            }
+            return Node.Status.FAILURE;
+        }
+        else return s;
+    }
+
+    public Node.Status GoToBackDoor()
+    {
+        return this.GoToDoor(backdoor);
         //this.agent.SetDestination(this.diamond.transform.position);
         //return Node.Status.SUCCESS;
     }
-    
+    public Node.Status GoToFrontDoor()
+    {
+        return this.GoToDoor(frontdoor);
+        //this.agent.SetDestination(this.diamond.transform.position);
+        //return Node.Status.SUCCESS;
+    }
+
+    public Node.Status GoToDoor(GameObject door)
+    {
+        Node.Status s = GotoLocation(door.transform.position);
+        if (s == Node.Status.SUCCESS)
+        {
+            if (!door.GetComponent<Lock>().isLocked)
+            {
+                door.SetActive(false);
+                return Node.Status.SUCCESS;
+            }
+            return Node.Status.FAILURE;
+        }
+        else return s; //Thông thường mà chưa tới nơi, nó sẽ trả ra RUNNING
+    }
+
     public Node.Status GoToVan()
     {
         return this.GotoLocation(this.van.transform.position);
@@ -85,6 +131,6 @@ public class RobberBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(treeStatus == Node.Status.RUNNING) treeStatus = tree.Process();
     }
 }
