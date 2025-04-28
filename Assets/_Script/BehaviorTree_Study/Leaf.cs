@@ -1,16 +1,21 @@
 using UnityEngine;
 
-public class Leaf : MonoBehaviour
+public class Leaf : Node
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public delegate Status Tick();
+    public Tick ProcessMethod;
+
+    public Leaf() { }
+
+    public Leaf(string n, Tick pm)
     {
-        
+        this.name = n;
+        this.ProcessMethod = pm;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override Status Process()
     {
-        
+        if(ProcessMethod != null) return ProcessMethod();
+        return Status.FAILURE;
     }
 }

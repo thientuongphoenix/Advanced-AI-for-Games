@@ -438,7 +438,6 @@ public class TicTacToeManager : MonoBehaviour
                         int newCol = col + dy[d] * k;
 
                         //Kiểm tra xem ô mới có nằm trong bàn cờ không
-                        //if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) break;
 
                         if (newRow < 0 || newRow >= boardSize ||
                             newCol < 0 || newCol >= boardSize ||
