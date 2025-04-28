@@ -15,6 +15,9 @@ public class RobberBehavior : MonoBehaviour
 
     Node.Status treeStatus = Node.Status.RUNNING;
 
+    [Range(0, 1000)]
+    public int money = 800;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -23,6 +26,7 @@ public class RobberBehavior : MonoBehaviour
         this.tree = new BehaviorTree(); // root Node
         Sequence steal = new Sequence("Steal Something");  
         Leaf goToDiamond = new Leaf("Go To Diamond", GoToDiamond);
+        Leaf hasGotMoney = new Leaf("Has Got Money", HasMoney);
         Leaf goToBackDoor = new Leaf("Go To BackDoor", GoToBackDoor);
         Leaf goToFrontDoor = new Leaf("Go To FrontDoor", GoToFrontDoor);
         Leaf goToVan = new Leaf("Go To Van", GoToVan);
@@ -31,6 +35,7 @@ public class RobberBehavior : MonoBehaviour
         opendoor.AddChild(goToFrontDoor);
         opendoor.AddChild(goToBackDoor);
 
+        steal.AddChild(hasGotMoney);
         steal.AddChild(opendoor); // Chọn cửa để vào
         steal.AddChild(goToDiamond);
         //steal.AddChild(goToBackDoor);
@@ -39,6 +44,12 @@ public class RobberBehavior : MonoBehaviour
         //root Node (tree) -> steal something -> ( 1. Go to diamond; 2. Go to van)
 
         tree.PrintTree();
+    }
+
+    public Node.Status HasMoney()
+    {
+        if (this.money >= 500) return Node.Status.FAILURE;
+        return Node.Status.SUCCESS;
     }
 
     public Node.Status GoToDiamond()
@@ -86,9 +97,16 @@ public class RobberBehavior : MonoBehaviour
 
     public Node.Status GoToVan()
     {
-        return this.GotoLocation(this.van.transform.position);
+        //return this.GotoLocation(this.van.transform.position);
         //this.agent.SetDestination(this.van.transform.position);
         //return Node.Status.SUCCESS;
+        Node.Status s = GotoLocation(this.van.transform.position);
+        if (s == Node.Status.SUCCESS)
+        {
+            money += 300;
+            diamond.SetActive(false);
+        }
+        return s;
     }
 
     /// <summary>
@@ -131,6 +149,6 @@ public class RobberBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(treeStatus == Node.Status.RUNNING) treeStatus = tree.Process();
+        if(treeStatus != Node.Status.SUCCESS) treeStatus = tree.Process();
     }
 }
