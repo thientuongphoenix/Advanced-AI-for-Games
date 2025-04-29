@@ -1,29 +1,30 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public class RobberBehavior : MonoBehaviour
+public class RobberBehavior : BTAgent
 {
-    BehaviorTree tree;
+    //BehaviorTree tree; //Cái này có rồi, nhờ kế thừa BTAgent
     public GameObject diamond;
     public GameObject van;
     public GameObject backdoor;
     public GameObject frontdoor;
-    NavMeshAgent agent;
+    //NavMeshAgent agent;
 
-    public enum ActionState { IDLE, WORKING};
-    ActionState state = ActionState.IDLE;
+    //public enum ActionState { IDLE, WORKING};
+    //ActionState state = ActionState.IDLE;
 
-    Node.Status treeStatus = Node.Status.RUNNING;
+    //Node.Status treeStatus = Node.Status.RUNNING;
 
     [Range(0, 1000)]
     public int money = 800;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    new void Start() //Thay vì override thì không, ở đây sử dụng new để hiding (che khuất hàm cùng tên trong class cha)
     {
-        this.agent = GetComponent<NavMeshAgent>();
+        //this.agent = GetComponent<NavMeshAgent>();
 
-        this.tree = new BehaviorTree(); // root Node
+        //this.tree = new BehaviorTree(); // root Node
+        base.Start();
         Sequence steal = new Sequence("Steal Something");  
         Leaf goToDiamond = new Leaf("Go To Diamond", GoToDiamond);
         Leaf hasGotMoney = new Leaf("Has Got Money", HasMoney);
@@ -121,7 +122,7 @@ public class RobberBehavior : MonoBehaviour
     /// </summary>
     /// <param name="destination">Vị trí mục tiêu cần đến.</param>
     /// <returns>Trạng thái hành động (SUCCESS, FAILURE, RUNNING).</returns>
-    Node.Status GotoLocation(Vector3 destination)
+    new Node.Status GotoLocation(Vector3 destination)
     {
         // Tính khoảng cách hiện tại tới điểm đến
         float distanceToTarget = Vector3.Distance(destination, this.transform.position);
@@ -147,11 +148,5 @@ public class RobberBehavior : MonoBehaviour
 
         // Nếu chưa tới đích và không thất bại → tiếp tục di chuyển
         return Node.Status.RUNNING;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(treeStatus != Node.Status.SUCCESS) treeStatus = tree.Process();
     }
 }
