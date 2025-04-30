@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.AI;
 
 public class BTAgent : MonoBehaviour
@@ -11,12 +12,17 @@ public class BTAgent : MonoBehaviour
 
     public Node.Status treeStatus = Node.Status.RUNNING;
 
+    WaitForSeconds waitForSeconds;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void Start()
     {
         this.agent = GetComponent<NavMeshAgent>();
 
         this.tree = new BehaviorTree(); // root Node
+
+        this.waitForSeconds = new WaitForSeconds(Random.Range(0.1f, 1f));
+        StartCoroutine(this.Behave());
     }
 
     /// <summary>
@@ -56,9 +62,22 @@ public class BTAgent : MonoBehaviour
         return Node.Status.RUNNING;
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// Hàm dùng để hạn chế bớt tầng xuất cập nhật BTree
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator Behave()
     {
-        if(treeStatus != Node.Status.SUCCESS) treeStatus = tree.Process();
+        while (true)
+        {
+            this.treeStatus = tree.Process();
+            yield return this.waitForSeconds;
+        }
     }
+
+    // Hàm này đã được thay thế bởi Behave để gọi ít hơn
+    //void Update()
+    //{
+    //    if(treeStatus != Node.Status.SUCCESS) treeStatus = tree.Process();
+    //}
 }

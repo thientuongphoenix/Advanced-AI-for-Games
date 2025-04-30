@@ -18,6 +18,9 @@ public class BehaviorTree : Node
 
     public override Status Process() //Ghi đè lại Process của Node
     {
+        if (children.Count == 0) return Status.SUCCESS;
+        //Khi Behave chạy là chưa có Code nào trong cây hết,
+        //dòng này trả ra SUCCESS để cây thêm con vô rồi chạy lại, chứ không nó lỗi OutOfRange
         return children[currentChild].Process(); //Chạy từ node con
     }
 
