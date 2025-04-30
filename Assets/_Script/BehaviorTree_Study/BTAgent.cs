@@ -15,7 +15,7 @@ public class BTAgent : MonoBehaviour
     WaitForSeconds waitForSeconds;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void Start()
+    public virtual void Start()
     {
         this.agent = GetComponent<NavMeshAgent>();
 

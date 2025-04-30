@@ -1804,8 +1804,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 524558653}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.22950613, y: 0.34205493, z: -0.08654347, w: -0.9071029}
-  m_LocalPosition: {x: 22.542892, y: 19.594994, z: -4.3823223}
+  m_LocalRotation: {x: -0.21755725, y: 0.77772415, z: -0.36567113, w: -0.46270806}
+  m_LocalPosition: {x: 37.30752, y: 39.32178, z: 35.630756}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2226,10 +2226,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 7
+  m_Speed: 10
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 150
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -2250,10 +2250,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e7124f3fb24b6144bc203225565c436, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 0}
+  state: 0
+  treeStatus: 1
   diamond: {fileID: 1550492363}
   van: {fileID: 117043023}
   backdoor: {fileID: 919599686}
   frontdoor: {fileID: 1791870521}
+  painting: {fileID: 1904932022}
   money: 800
 --- !u!1 &716268924
 GameObject:
