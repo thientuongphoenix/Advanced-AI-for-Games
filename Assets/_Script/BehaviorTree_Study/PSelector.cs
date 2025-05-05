@@ -16,6 +16,7 @@ using UnityEngine;
 public class PSelector : Node
 {
     Node[] nodeArray;
+    bool ordered = false; //Chạy lần đầu thì khỏi cần sắp xếp lại
 
     /// <summary>
     /// Khởi tạo một PSelector node với tên được chỉ định
@@ -57,7 +58,11 @@ public class PSelector : Node
     public override Status Process()
     {
         // Sắp xếp lại các node con theo thứ tự ưu tiên
-        OrderNode();
+        if(!ordered)
+        {
+            OrderNode();
+            ordered = true;
+        }
 
         // Thực thi node con hiện tại
         Status childstatus = children[currentChild].Process();
@@ -68,6 +73,7 @@ public class PSelector : Node
         {
             //children[currentChild].sortOrder = 1; // Tăng độ ưu tiên cho lần sau
             currentChild = 0; // Reset cho lần sau
+            ordered = false;
             return Status.SUCCESS;
         }
         //else children[currentChild].sortOrder = 10; // Giảm độ ưu tiên cho lần sau
@@ -77,6 +83,7 @@ public class PSelector : Node
         if(currentChild >= children.Count)
         {
             currentChild = 0;
+            ordered = false;
             return Status.FAILURE; // Không có node nào thành công thì node Fail
         }
 

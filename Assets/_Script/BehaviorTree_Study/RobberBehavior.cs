@@ -10,6 +10,8 @@ public class RobberBehavior : BTAgent
     public GameObject frontdoor;
     public GameObject painting;
 
+    public GameObject[] art;
+
     GameObject pickup;
     //NavMeshAgent agent;
 
@@ -35,11 +37,17 @@ public class RobberBehavior : BTAgent
         Leaf goToDiamond = new Leaf("Go To Diamond", GoToDiamond, 1);
         Leaf goToPainting = new Leaf("Go To Diamond", GoToPainting, 2);
         Leaf hasGotMoney = new Leaf("Has Got Money", HasMoney);
+
+        Leaf goToArt1 = new Leaf("Go To Art 1", GoToArt1);
+        Leaf goToArt2 = new Leaf("Go To Art 2", GoToArt2);
+        Leaf goToArt3 = new Leaf("Go To Art 3", GoToArt3);
+
+
         goToBackDoor = new Leaf("Go To BackDoor", GoToBackDoor, 2);
         goToFrontDoor = new Leaf("Go To FrontDoor", GoToFrontDoor, 1);
         Leaf goToVan = new Leaf("Go To Van", GoToVan);
         PSelector opendoor = new PSelector("Open Door");
-        PSelector selectObject = new PSelector("Select Object To Steal");
+        RSelector selectObject = new RSelector("Select Object To Steal");
 
         Inverter invertMoney = new Inverter("Invert Money");
         invertMoney.AddChild(hasGotMoney);
@@ -49,8 +57,11 @@ public class RobberBehavior : BTAgent
         steal.AddChild(invertMoney);
         steal.AddChild(opendoor); // Chọn cửa để vào
 
-        selectObject.AddChild(goToDiamond);
-        selectObject.AddChild(goToPainting);
+        //selectObject.AddChild(goToDiamond);
+        //selectObject.AddChild(goToPainting);
+        selectObject.AddChild(goToArt1);
+        selectObject.AddChild(goToArt2);
+        selectObject.AddChild(goToArt3);
         steal.AddChild(selectObject); //Chọn vật để trộm
 
         //steal.AddChild(goToBackDoor);
@@ -95,6 +106,42 @@ public class RobberBehavior : BTAgent
         {
             this.painting.transform.parent = this.gameObject.transform;
             this.pickup = this.painting;
+        }
+        return s;
+    }
+
+    public Node.Status GoToArt1()
+    {
+        if(!this.art[0].activeSelf) return Node.Status.FAILURE;
+        Node.Status s = GotoLocation(this.art[0].transform.position);
+        if (s == Node.Status.SUCCESS)
+        {
+            this.art[0].transform.parent = this.gameObject.transform;
+            this.pickup = this.art[0];
+        }
+        return s;
+    }
+
+    public Node.Status GoToArt2()
+    {
+        if(!this.art[1].activeSelf) return Node.Status.FAILURE;
+        Node.Status s = GotoLocation(this.art[1].transform.position);
+        if (s == Node.Status.SUCCESS)
+        {
+            this.art[1].transform.parent = this.gameObject.transform;
+            this.pickup = this.art[1];
+        }
+        return s;
+    }
+
+    public Node.Status GoToArt3()
+    {
+        if(!this.art[2].activeSelf) return Node.Status.FAILURE;
+        Node.Status s = GotoLocation(this.art[2].transform.position);
+        if (s == Node.Status.SUCCESS)
+        {
+            this.art[2].transform.parent = this.gameObject.transform;
+            this.pickup = this.art[2];
         }
         return s;
     }
