@@ -21,6 +21,9 @@ public class RobberBehavior : BTAgent
     [Range(0, 1000)]
     public int money = 800;
 
+    Leaf goToBackDoor;
+    Leaf goToFrontDoor;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void Start() //Thay vì override thì không, ở đây sử dụng new để hiding (che khuất hàm cùng tên trong class cha)
     {
@@ -29,14 +32,14 @@ public class RobberBehavior : BTAgent
         //this.tree = new BehaviorTree(); // root Node
         base.Start();
         Sequence steal = new Sequence("Steal Something");  
-        Leaf goToDiamond = new Leaf("Go To Diamond", GoToDiamond);
-        Leaf goToPainting = new Leaf("Go To Diamond", GoToPainting);
+        Leaf goToDiamond = new Leaf("Go To Diamond", GoToDiamond, 1);
+        Leaf goToPainting = new Leaf("Go To Diamond", GoToPainting, 2);
         Leaf hasGotMoney = new Leaf("Has Got Money", HasMoney);
-        Leaf goToBackDoor = new Leaf("Go To BackDoor", GoToBackDoor);
-        Leaf goToFrontDoor = new Leaf("Go To FrontDoor", GoToFrontDoor);
+        goToBackDoor = new Leaf("Go To BackDoor", GoToBackDoor, 2);
+        goToFrontDoor = new Leaf("Go To FrontDoor", GoToFrontDoor, 1);
         Leaf goToVan = new Leaf("Go To Van", GoToVan);
-        Selector opendoor = new Selector("Open Door");
-        Selector selectObject = new Selector("Select Object To Steal");
+        PSelector opendoor = new PSelector("Open Door");
+        PSelector selectObject = new PSelector("Select Object To Steal");
 
         Inverter invertMoney = new Inverter("Invert Money");
         invertMoney.AddChild(hasGotMoney);
@@ -96,15 +99,36 @@ public class RobberBehavior : BTAgent
         return s;
     }
 
+    //Đầu tiên nhân vật đi theo hướng cửa trước, vì bị khóa nên phải đi theo cửa sau
+    //Từ đó cửa trước bị xếp độ ưu tiên là 10, cửa sau là 1
+    //Lần thử tiếp theo nhân vật sẽ đi theo cửa sau thay vì cửa trước
     public Node.Status GoToBackDoor()
     {
-        return this.GoToDoor(backdoor);
+        Node.Status s = this.GoToDoor(backdoor);
+        if (s == Node.Status.FAILURE)
+        {
+            this.goToBackDoor.sortOrder = 10;
+        }
+        else
+        {
+            this.goToBackDoor.sortOrder = 1;
+        }
+        return s;
         //this.agent.SetDestination(this.diamond.transform.position);
         //return Node.Status.SUCCESS;
     }
     public Node.Status GoToFrontDoor()
     {
-        return this.GoToDoor(frontdoor);
+        Node.Status s = this.GoToDoor(frontdoor);
+        if (s == Node.Status.FAILURE)
+        {
+            this.goToFrontDoor.sortOrder = 10;
+        }
+        else
+        {
+            this.goToFrontDoor.sortOrder = 1;
+        }
+        return s;
         //this.agent.SetDestination(this.diamond.transform.position);
         //return Node.Status.SUCCESS;
     }

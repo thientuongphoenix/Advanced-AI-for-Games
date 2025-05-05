@@ -9,6 +9,7 @@ public class Node
     public List<Node> children = new List<Node>();
     public int currentChild = 0;
     public string name;
+    public int sortOrder;
 
     public Node() { }
 
@@ -19,6 +20,17 @@ public class Node
     public Node(string n)
     {
         this.name = n;
+    }
+
+    /// <summary>
+    /// Dùng để đặt tên và đặt mức độ ưu tiên cho Node
+    /// </summary>
+    /// <param name="n">Tên Node</param>
+    /// <param name="order">Mức độ ưu tiên</param>
+    public Node(string n, int order)
+    {
+        this.name = n;
+        this.sortOrder = order;
     }
 
     public virtual Status Process()

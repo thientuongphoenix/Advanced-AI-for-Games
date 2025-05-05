@@ -13,6 +13,13 @@ public class Leaf : Node
         this.ProcessMethod = pm;
     }
 
+    public Leaf(string n, Tick pm, int order)
+    {
+        this.name = n;
+        this.ProcessMethod = pm;
+        this.sortOrder = order;
+    }
+
     public override Status Process()
     {
         if(ProcessMethod != null) return ProcessMethod();
