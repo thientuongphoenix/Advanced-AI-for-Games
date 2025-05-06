@@ -11,6 +11,8 @@ public class PatrolBehavior : BTAgent
     [Range(0, 1000)]
     public int boredom = 0;
 
+    public bool ticket = false;
+
     public override void Start()
     {
         base.Start();
@@ -30,6 +32,17 @@ public class PatrolBehavior : BTAgent
         viewArt.AddChild(isOpen);
         viewArt.AddChild(isBored);
         viewArt.AddChild(goToFrontDoor);
+
+        Leaf noTicket = new Leaf("Wait For Ticket", NoTicket);
+        Leaf isWaiting = new Leaf("Waiting For Worker", IsWaiting);
+
+        BehaviorTree waitForTicket = new BehaviorTree();
+        waitForTicket.AddChild(noTicket);
+
+        Loop getTicket = new Loop("Ticket", waitForTicket);
+        getTicket.AddChild(isWaiting);
+
+        viewArt.AddChild(getTicket);
 
         BehaviorTree whileBored = new BehaviorTree();
         whileBored.AddChild(isBored);
@@ -101,5 +114,27 @@ public class PatrolBehavior : BTAgent
         }
     }
 
+    public Node.Status NoTicket()
+    {
+        if(this.ticket || IsOpen() == Node.Status.FAILURE)
+        {
+            return Node.Status.FAILURE;
+        }
+        else
+        {
+            return Node.Status.SUCCESS;
+        }
+    }
 
+    public Node.Status IsWaiting()
+    {
+        if(Blackboard.Instance.RegisterPatrol(this.gameObject) == this.gameObject)
+        {
+            return Node.Status.SUCCESS;
+        }
+        else
+        {
+            return Node.Status.FAILURE;
+        }
+    }
 }

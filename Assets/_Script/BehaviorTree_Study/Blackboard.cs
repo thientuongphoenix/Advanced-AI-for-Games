@@ -7,6 +7,7 @@ public class Blackboard : MonoBehaviour
 {
     public float timeOfDay;
     public Text clock;
+    public GameObject patrol;
 
     static Blackboard instance;
     public static Blackboard Instance
@@ -51,5 +52,16 @@ public class Blackboard : MonoBehaviour
             clock.text = timeOfDay + " : 00";
             yield return new WaitForSeconds(1f);
         }
+    }
+
+    public GameObject RegisterPatrol(GameObject p)
+    {
+        if(patrol == null) patrol = p;
+        return patrol;
+    }
+
+    public void DeregisterPatrol()
+    {
+        patrol = null;
     }
 }
