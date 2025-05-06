@@ -55,14 +55,21 @@ public class RobberBehavior : BTAgent
         Leaf goToVan = new Leaf("Go To Van", GoToVan);
         PSelector opendoor = new PSelector("Open Door");
         
+        Sequence runAway = new Sequence("Run Away");
+        Leaf canSee = new Leaf("Can See Cop?", CanSeeCop);
+        Leaf flee = new Leaf("Flee From Cop", FleeFromCop);
 
         Inverter invertMoney = new Inverter("Invert Money");
         invertMoney.AddChild(hasGotMoney);
+
+        Inverter cantSeeCop = new Inverter("Cant See Cop?");
+        cantSeeCop.AddChild(canSee);
 
         opendoor.AddChild(goToFrontDoor);
         opendoor.AddChild(goToBackDoor);
         steal.AddChild(invertMoney);
         steal.AddChild(opendoor); // Chọn cửa để vào
+        steal.AddChild(cantSeeCop);
 
         //selectObject.AddChild(goToDiamond);
         //selectObject.AddChild(goToPainting);
@@ -74,16 +81,33 @@ public class RobberBehavior : BTAgent
         //steal.AddChild(goToBackDoor);
         steal.AddChild(goToVan); // trở về xe
 
-
-
-        Sequence runAway = new Sequence("Run Away");
-        Leaf seeCop = new Leaf("Can See Cop?", CanSeeCop);
-        Leaf flee = new Leaf("Flee From Cop", FleeFromCop);
-        runAway.AddChild(seeCop);
+        runAway.AddChild(canSee);
         runAway.AddChild(flee);
 
-        this.tree.AddChild(runAway); // Thêm tất cả vào node gốc
-        //root Node (tree) -> steal something -> ( 1. Go to diamond; 2. Go to van)
+        Selector beThief = new Selector("Be a Thief");
+        beThief.AddChild(steal);
+        beThief.AddChild(runAway);
+
+        this.tree.AddChild(beThief); // Thêm tất cả vào node gốc
+        
+        /* Cấu trúc cây BehaviorTree hiện tại:
+         * Root (BehaviorTree)
+         * └── Be a Thief (Selector)
+         *     ├── Steal (Sequence) 
+         *     │   ├── Invert Money (Inverter)
+         *     │   │   └── Has Got Money
+         *     │   ├── Open Door (PSelector)
+         *     │   │   ├── Go To FrontDoor
+         *     │   │   └── Go To BackDoor  
+         *     │   ├── Select Object To Steal (RSelector)
+         *     │   │   ├── Go To Art[0]
+         *     │   │   ├── Go To Art[1] 
+         *     │   │   └── Go To Art[2]...
+         *     │   └── Go To Van
+         *     └── Run Away (Sequence)
+         *         ├── Can See Cop?
+         *         └── Flee From Cop
+         */
 
         this.tree.PrintTree();
     }
