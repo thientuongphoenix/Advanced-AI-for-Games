@@ -243,7 +243,7 @@ public class RobberBehavior : BTAgent
     //Lần thử tiếp theo nhân vật sẽ đi theo cửa sau thay vì cửa trước
     public Node.Status GoToBackDoor()
     {
-        Node.Status s = this.GoToDoor(backdoor);
+        Node.Status s = base.GoToDoor(backdoor);
         if (s == Node.Status.FAILURE)
         {
             this.goToBackDoor.sortOrder = 10;
@@ -258,7 +258,7 @@ public class RobberBehavior : BTAgent
     }
     public Node.Status GoToFrontDoor()
     {
-        Node.Status s = this.GoToDoor(frontdoor);
+        Node.Status s = base.GoToDoor(frontdoor);
         if (s == Node.Status.FAILURE)
         {
             this.goToFrontDoor.sortOrder = 10;
