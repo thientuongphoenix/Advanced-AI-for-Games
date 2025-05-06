@@ -9,6 +9,7 @@ public class RobberBehavior : BTAgent
     public GameObject backdoor;
     public GameObject frontdoor;
     public GameObject painting;
+    public GameObject Cop;
 
     public GameObject[] art;
 
@@ -27,7 +28,7 @@ public class RobberBehavior : BTAgent
     Leaf goToFrontDoor;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public override void Start() //Thay vì override thì không, ở đây sử dụng new để hiding (che khuất hàm cùng tên trong class cha)
+    public override void Start()
     {
         //this.agent = GetComponent<NavMeshAgent>();
 
@@ -42,12 +43,18 @@ public class RobberBehavior : BTAgent
         Leaf goToArt2 = new Leaf("Go To Art 2", GoToArt2);
         Leaf goToArt3 = new Leaf("Go To Art 3", GoToArt3);
 
+        RSelector selectObject = new RSelector("Select Object To Steal");
+        for(int i = 0; i < art.Length; i++)
+        {
+            Leaf gta = new Leaf("Go To " + art[i].name, i, GoToArt);
+            selectObject.AddChild(gta);
+        }
 
         goToBackDoor = new Leaf("Go To BackDoor", GoToBackDoor, 2);
         goToFrontDoor = new Leaf("Go To FrontDoor", GoToFrontDoor, 1);
         Leaf goToVan = new Leaf("Go To Van", GoToVan);
         PSelector opendoor = new PSelector("Open Door");
-        RSelector selectObject = new RSelector("Select Object To Steal");
+        
 
         Inverter invertMoney = new Inverter("Invert Money");
         invertMoney.AddChild(hasGotMoney);
@@ -59,17 +66,36 @@ public class RobberBehavior : BTAgent
 
         //selectObject.AddChild(goToDiamond);
         //selectObject.AddChild(goToPainting);
-        selectObject.AddChild(goToArt1);
-        selectObject.AddChild(goToArt2);
-        selectObject.AddChild(goToArt3);
+        // selectObject.AddChild(goToArt1);
+        // selectObject.AddChild(goToArt2);
+        // selectObject.AddChild(goToArt3);
         steal.AddChild(selectObject); //Chọn vật để trộm
 
         //steal.AddChild(goToBackDoor);
         steal.AddChild(goToVan); // trở về xe
-        this.tree.AddChild(steal); // Thêm tất cả vào node gốc
+
+
+
+        Sequence runAway = new Sequence("Run Away");
+        Leaf seeCop = new Leaf("Can See Cop?", CanSeeCop);
+        Leaf flee = new Leaf("Flee From Cop", FleeFromCop);
+        runAway.AddChild(seeCop);
+        runAway.AddChild(flee);
+
+        this.tree.AddChild(runAway); // Thêm tất cả vào node gốc
         //root Node (tree) -> steal something -> ( 1. Go to diamond; 2. Go to van)
 
         this.tree.PrintTree();
+    }
+
+    public Node.Status CanSeeCop()
+    {
+        return CanSee(this.Cop.transform.position, "Cop", 10, 90);
+    }
+
+    public Node.Status FleeFromCop()
+    {
+        return Flee(this.Cop.transform.position, 10);
     }
 
     public Node.Status HasMoney()
@@ -106,6 +132,18 @@ public class RobberBehavior : BTAgent
         {
             this.painting.transform.parent = this.gameObject.transform;
             this.pickup = this.painting;
+        }
+        return s;
+    }
+
+    public Node.Status GoToArt(int i)
+    {
+        if(!this.art[i].activeSelf) return Node.Status.FAILURE;
+        Node.Status s = GotoLocation(this.art[i].transform.position);
+        if (s == Node.Status.SUCCESS)
+        {
+            this.art[i].transform.parent = this.gameObject.transform;
+            this.pickup = this.art[i];
         }
         return s;
     }
