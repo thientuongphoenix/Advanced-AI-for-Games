@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -34,6 +35,17 @@ public class PatrolBehavior : BTAgent
         bePatrol.AddChild(viewArt);
 
         tree.AddChild(bePatrol);
+
+        StartCoroutine("IncreaseBoredom");
+    }
+
+    IEnumerator IncreaseBoredom()
+    {
+        while(true)
+        {
+            this.boredom = Mathf.Clamp(this.boredom + 20, 0, 1000);
+            yield return new WaitForSeconds(Random.Range(1f, 5f));
+        }
     }
 
     public Node.Status GoToArt(int i)

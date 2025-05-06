@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.AI;
 
 public class RobberBehavior : BTAgent
@@ -122,6 +123,8 @@ public class RobberBehavior : BTAgent
 
         this.tree.PrintTree();
 
+        StartCoroutine("DecreaseMoney");
+
         // Cây hành vi của tên trộm:
         // Root
         // └── Be a Thief (Selector)
@@ -139,6 +142,15 @@ public class RobberBehavior : BTAgent
         //     └── Run Away (Sequence)
         //         ├── Can See Cop? (Leaf)
         //         └── Flee From Cop (Leaf)
+    }
+
+    IEnumerator DecreaseMoney()
+    {
+        while(true)
+        {
+            this.money = Mathf.Clamp(this.money - 50, 0, 1000);
+            yield return new WaitForSeconds(Random.Range(1f, 5f));
+        }
     }
 
     public Node.Status CanSeeCop()
