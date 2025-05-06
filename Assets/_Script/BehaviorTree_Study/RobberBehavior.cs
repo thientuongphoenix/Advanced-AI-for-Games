@@ -99,8 +99,14 @@ public class RobberBehavior : BTAgent
         // steal.AddChild(s2);
         // steal.AddChild(s3);
         // steal.AddChild(s4);
+
+        Leaf isOpen = new Leaf("Is Open", IsOpen);
+        Inverter isClosed = new Inverter("Is Closed");
+        isClosed.AddChild(isOpen);
+
         BehaviorTree stealConditions = new BehaviorTree();
         Sequence conditions = new Sequence("Stealing Conditions");
+        conditions.AddChild(isClosed);
         conditions.AddChild(cantSeeCop);
         conditions.AddChild(invertMoney);
         stealConditions.AddChild(conditions);

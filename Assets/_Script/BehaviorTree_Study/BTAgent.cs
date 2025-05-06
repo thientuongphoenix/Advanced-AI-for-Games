@@ -45,6 +45,18 @@ public class BTAgent : MonoBehaviour
         return Node.Status.FAILURE;
     }
 
+    public Node.Status IsOpen()
+    {
+        if(Blackboard.Instance.timeOfDay < 9 || Blackboard.Instance.timeOfDay > 17)
+        {
+            return Node.Status.FAILURE;
+        }
+        else
+        {
+            return Node.Status.SUCCESS;
+        }
+    }
+
     public Node.Status Flee(Vector3 location, float distance)
     {
         if(state == ActionState.IDLE)
