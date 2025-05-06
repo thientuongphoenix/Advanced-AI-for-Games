@@ -34,7 +34,7 @@ public class RobberBehavior : BTAgent
 
         //this.tree = new BehaviorTree(); // root Node
         base.Start();
-        Sequence steal = new Sequence("Steal Something");  
+          
         Leaf goToDiamond = new Leaf("Go To Diamond", GoToDiamond, 1);
         Leaf goToPainting = new Leaf("Go To Diamond", GoToPainting, 2);
         Leaf hasGotMoney = new Leaf("Has Got Money", HasMoney);
@@ -62,52 +62,54 @@ public class RobberBehavior : BTAgent
         Inverter invertMoney = new Inverter("Invert Money");
         invertMoney.AddChild(hasGotMoney);
 
+        opendoor.AddChild(goToFrontDoor);
+        opendoor.AddChild(goToBackDoor);
+
         Inverter cantSeeCop = new Inverter("Cant See Cop?");
         cantSeeCop.AddChild(canSee);
 
-        opendoor.AddChild(goToFrontDoor);
-        opendoor.AddChild(goToBackDoor);
-        steal.AddChild(invertMoney);
-        steal.AddChild(opendoor); // Chọn cửa để vào
-        steal.AddChild(cantSeeCop);
-
-        //selectObject.AddChild(goToDiamond);
-        //selectObject.AddChild(goToPainting);
-        // selectObject.AddChild(goToArt1);
-        // selectObject.AddChild(goToArt2);
-        // selectObject.AddChild(goToArt3);
-        steal.AddChild(selectObject); //Chọn vật để trộm
-
-        //steal.AddChild(goToBackDoor);
-        steal.AddChild(goToVan); // trở về xe
-
         runAway.AddChild(canSee);
         runAway.AddChild(flee);
+        
+        // steal.AddChild(invertMoney);
+        // steal.AddChild(opendoor); // Chọn cửa để vào
+        // steal.AddChild(cantSeeCop);
+
+        // steal.AddChild(selectObject); //Chọn vật để trộm
+
+        // //steal.AddChild(goToBackDoor);
+        // steal.AddChild(goToVan); // trở về xe
+
+        Selector s1 = new Selector("s1");
+        s1.AddChild(invertMoney);
+        Sequence s2 = new Sequence("s2");
+        s2.AddChild(cantSeeCop);
+        s2.AddChild(opendoor);
+        Sequence s3 = new Sequence("s3");
+        s3.AddChild(cantSeeCop);
+        s3.AddChild(selectObject);
+        Sequence s4 = new Sequence("s4");
+        s4.AddChild(cantSeeCop);
+        s4.AddChild(goToVan);
+
+        // steal.AddChild(s1);
+        // steal.AddChild(s2);
+        // steal.AddChild(s3);
+        // steal.AddChild(s4);
+        BehaviorTree seeCop = new BehaviorTree();
+        seeCop.AddChild(cantSeeCop);
+        DepSequence steal = new DepSequence("Steal Something", seeCop,agent);
+        steal.AddChild(invertMoney);
+        steal.AddChild(opendoor);
+        steal.AddChild(selectObject);
+        steal.AddChild(goToVan);
+        
 
         Selector beThief = new Selector("Be a Thief");
         beThief.AddChild(steal);
         beThief.AddChild(runAway);
 
         this.tree.AddChild(beThief); // Thêm tất cả vào node gốc
-        
-        /* Cấu trúc cây BehaviorTree hiện tại:
-         * Root (BehaviorTree)
-         * └── Be a Thief (Selector)
-         *     ├── Steal (Sequence) 
-         *     │   ├── Invert Money (Inverter)
-         *     │   │   └── Has Got Money
-         *     │   ├── Open Door (PSelector)
-         *     │   │   ├── Go To FrontDoor
-         *     │   │   └── Go To BackDoor  
-         *     │   ├── Select Object To Steal (RSelector)
-         *     │   │   ├── Go To Art[0]
-         *     │   │   ├── Go To Art[1] 
-         *     │   │   └── Go To Art[2]...
-         *     │   └── Go To Van
-         *     └── Run Away (Sequence)
-         *         ├── Can See Cop?
-         *         └── Flee From Cop
-         */
 
         this.tree.PrintTree();
     }

@@ -33,6 +33,15 @@ public class Node
         this.sortOrder = order;
     }
 
+    public void Reset()
+    {
+        foreach(Node n in children)
+        {
+            n.Reset();
+        }
+        currentChild = 0;
+    }
+
     public virtual Status Process()
     {
         return children[currentChild].Process();

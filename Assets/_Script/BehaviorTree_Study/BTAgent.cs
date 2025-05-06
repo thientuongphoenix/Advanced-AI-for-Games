@@ -31,7 +31,7 @@ public class BTAgent : MonoBehaviour
         Vector3 directionToTarget = target - this.transform.position;
         float  angle = Vector3.Angle(directionToTarget, this.transform.forward);
 
-        if(angle <= maxAngle || directionToTarget.magnitude <= distance)
+        if(angle <= maxAngle && directionToTarget.magnitude <= distance)
         {
             RaycastHit hitInfo;
             if(Physics.Raycast(this.transform.position, directionToTarget, out hitInfo))
