@@ -23,13 +23,27 @@ public class PatrolBehavior : BTAgent
         Leaf goToFrontDoor = new Leaf("Go To Frontdoor", GoToFrontDoor);
         Leaf goToHome = new Leaf("Go To Home", GoToHome);
         Leaf isBored = new Leaf("Is Bored?", IsBored);
+
+        Sequence viewArt = new Sequence("View Art");
+        viewArt.AddChild(isBored);
+        viewArt.AddChild(goToFrontDoor);
+        viewArt.AddChild(selectObject);
+        viewArt.AddChild(goToHome);
+
+        Selector bePatrol = new Selector("Be A Patrol");
+        bePatrol.AddChild(viewArt);
+
+        tree.AddChild(bePatrol);
     }
 
     public Node.Status GoToArt(int i)
     {
         if(!this.art[i].activeSelf) return Node.Status.FAILURE;
         Node.Status s = GotoLocation(this.art[i].transform.position);
-        
+        if(s == Node.Status.SUCCESS)
+        {
+            this.boredom = Mathf.Clamp(this.boredom - 500, 0, 1000);
+        }
         return s;
     }
 

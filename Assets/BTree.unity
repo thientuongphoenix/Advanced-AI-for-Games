@@ -563,7 +563,7 @@ GameObject:
   - component: {fileID: 111508207}
   - component: {fileID: 111508206}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Home
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1349,6 +1349,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7881807149238628900, guid: d36c43225f9391e4c8810c98eb7ef85e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1413890927}
+    - targetCorrespondingSourceObject: {fileID: 7881807149238628900, guid: d36c43225f9391e4c8810c98eb7ef85e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1413890928}
   m_SourcePrefab: {fileID: 100100000, guid: d36c43225f9391e4c8810c98eb7ef85e, type: 3}
 --- !u!1 &381845542
 GameObject:
@@ -2414,6 +2417,7 @@ MonoBehaviour:
   - {fileID: 925317490}
   - {fileID: 425408384}
   - {fileID: 915494408}
+  - {fileID: 1550492363}
   money: 800
 --- !u!1 &716268924
 GameObject:
@@ -5172,7 +5176,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 10
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -5184,6 +5188,34 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1413890928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413890925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aebb160a1a45c87409faa7c5f12b0324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agent: {fileID: 0}
+  state: 0
+  treeStatus: 1
+  art:
+  - {fileID: 1550492363}
+  - {fileID: 1904932022}
+  - {fileID: 1101234485}
+  - {fileID: 1922895633}
+  - {fileID: 1544815185}
+  - {fileID: 1959054990}
+  - {fileID: 925317490}
+  - {fileID: 425408384}
+  - {fileID: 915494408}
+  frontdoor: {fileID: 1791870521}
+  home: {fileID: 111508205}
+  boredom: 0
 --- !u!1 &1442085865
 GameObject:
   m_ObjectHideFlags: 0
