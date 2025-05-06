@@ -24,8 +24,10 @@ public class PatrolBehavior : BTAgent
         Leaf goToFrontDoor = new Leaf("Go To Frontdoor", GoToFrontDoor);
         Leaf goToHome = new Leaf("Go To Home", GoToHome);
         Leaf isBored = new Leaf("Is Bored?", IsBored);
+        Leaf isOpen = new Leaf("Is Open?", IsOpen);
 
         Sequence viewArt = new Sequence("View Art");
+        viewArt.AddChild(isOpen);
         viewArt.AddChild(isBored);
         viewArt.AddChild(goToFrontDoor);
 
@@ -39,10 +41,16 @@ public class PatrolBehavior : BTAgent
 
         viewArt.AddChild(goToHome);
 
-        Selector bePatrol = new Selector("Be A Patrol");
+        BehaviorTree galleryOpenCondition = new BehaviorTree();
+        galleryOpenCondition.AddChild(isOpen);
+        DepSequence bePatrol = new DepSequence("Be A Patrol", galleryOpenCondition, agent);
         bePatrol.AddChild(viewArt);
 
-        tree.AddChild(bePatrol);
+        Selector viewArtWithFallback = new Selector("View Art With Fallback");
+        viewArtWithFallback.AddChild(bePatrol);
+        viewArtWithFallback.AddChild(goToHome);
+
+        tree.AddChild(viewArtWithFallback);
 
         StartCoroutine("IncreaseBoredom");
     }
