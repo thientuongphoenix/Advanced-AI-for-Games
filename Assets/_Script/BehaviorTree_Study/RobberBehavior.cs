@@ -106,33 +106,37 @@ public class RobberBehavior : BTAgent
         steal.AddChild(opendoor);
         steal.AddChild(selectObject);
         steal.AddChild(goToVan);
+
+        Selector stealWithFallback = new Selector("Steal With Fallback");
+        stealWithFallback.AddChild(steal);
+        stealWithFallback.AddChild(goToVan);
         
 
         Selector beThief = new Selector("Be a Thief");
-        beThief.AddChild(steal);
+        beThief.AddChild(stealWithFallback);
         beThief.AddChild(runAway);
 
         this.tree.AddChild(beThief); // Thêm tất cả vào node gốc
 
         this.tree.PrintTree();
 
-        // Debug.Log("Cây hành vi của tên trộm:");
-        // Debug.Log("Root");
-        // Debug.Log("└── Be a Thief (Selector)");
-        // Debug.Log("    ├── Steal Something (DepSequence)");
-        // Debug.Log("    │   ├── Stealing Conditions (Sequence)");
-        // Debug.Log("    │   │   ├── Can't See Cop (Sequence)");
-        // Debug.Log("    │   │   │   └── Can See Cop? (Leaf)");
-        // Debug.Log("    │   │   └── Has No Money (Inverter)");
-        // Debug.Log("    │   │       └── Has Money? (Leaf)");
-        // Debug.Log("    │   ├── Open Door (Leaf)");
-        // Debug.Log("    │   ├── Select Object (Selector)");
-        // Debug.Log("    │   │   ├── Go To Diamond (Leaf)");
-        // Debug.Log("    │   │   └── Go To Painting (Leaf)");
-        // Debug.Log("    │   └── Go To Van (Leaf)");
-        // Debug.Log("    └── Run Away (Sequence)");
-        // Debug.Log("        ├── Can See Cop? (Leaf)");
-        // Debug.Log("        └── Flee From Cop (Leaf)");
+        // Cây hành vi của tên trộm:
+        // Root
+        // └── Be a Thief (Selector)
+        //     ├── Steal Something (DepSequence)  
+        //     │   ├── Stealing Conditions (Sequence)
+        //     │   │   ├── Can't See Cop (Sequence)
+        //     │   │   │   └── Can See Cop? (Leaf)
+        //     │   │   └── Has No Money (Inverter)
+        //     │   │       └── Has Money? (Leaf)
+        //     │   ├── Open Door (Leaf)
+        //     │   ├── Select Object (Selector)
+        //     │   │   ├── Go To Diamond (Leaf)
+        //     │   │   └── Go To Painting (Leaf)
+        //     │   └── Go To Van (Leaf)
+        //     └── Run Away (Sequence)
+        //         ├── Can See Cop? (Leaf)
+        //         └── Flee From Cop (Leaf)
     }
 
     public Node.Status CanSeeCop()

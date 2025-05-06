@@ -34,8 +34,18 @@ public class Leaf : Node
 
     public override Status Process()
     {
-        if(ProcessMethod != null) return ProcessMethod();
-        else if(ProcessMethodM != null) return ProcessMethodM(index);
-        return Status.FAILURE;
+        Node.Status s;
+        if(ProcessMethod != null)
+        {
+            s = ProcessMethod();
+        }
+        else if(ProcessMethodM != null)
+        {
+            s = ProcessMethodM(index);
+        }
+        else s = Status.FAILURE;
+        
+        Debug.Log(name + " " + s);
+        return s;
     }
 }
