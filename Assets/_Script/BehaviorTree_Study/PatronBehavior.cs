@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PatrolBehavior : BTAgent
+public class PatronBehavior : BTAgent
 {
     public GameObject[] art;
     public GameObject frontdoor;
@@ -56,11 +56,11 @@ public class PatrolBehavior : BTAgent
 
         BehaviorTree galleryOpenCondition = new BehaviorTree();
         galleryOpenCondition.AddChild(isOpen);
-        DepSequence bePatrol = new DepSequence("Be A Patrol", galleryOpenCondition, agent);
-        bePatrol.AddChild(viewArt);
+        DepSequence bePatron = new DepSequence("Be A Patron", galleryOpenCondition, agent);
+        bePatron.AddChild(viewArt);
 
         Selector viewArtWithFallback = new Selector("View Art With Fallback");
-        viewArtWithFallback.AddChild(bePatrol);
+        viewArtWithFallback.AddChild(bePatron);
         viewArtWithFallback.AddChild(goToHome);
 
         tree.AddChild(viewArtWithFallback);
@@ -128,7 +128,7 @@ public class PatrolBehavior : BTAgent
 
     public Node.Status IsWaiting()
     {
-        if(Blackboard.Instance.RegisterPatrol(this.gameObject) == this.gameObject)
+        if(Blackboard.Instance.RegisterPatrol(this.gameObject))
         {
             return Node.Status.SUCCESS;
         }

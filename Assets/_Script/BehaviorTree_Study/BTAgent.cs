@@ -47,7 +47,7 @@ public class BTAgent : MonoBehaviour
 
     public Node.Status IsOpen()
     {
-        if(Blackboard.Instance.timeOfDay < 9 || Blackboard.Instance.timeOfDay > 17)
+        if(Blackboard.Instance.timeOfDay < Blackboard.Instance.openTime || Blackboard.Instance.timeOfDay > Blackboard.Instance.closeTime)
         {
             return Node.Status.FAILURE;
         }

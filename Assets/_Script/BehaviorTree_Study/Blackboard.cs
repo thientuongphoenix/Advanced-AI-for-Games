@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +8,9 @@ public class Blackboard : MonoBehaviour
 {
     public float timeOfDay;
     public Text clock;
-    public GameObject patrol;
+    public Stack<GameObject> patrons = new Stack<GameObject>();
+    public int openTime = 6;
+    public int closeTime = 20;
 
     static Blackboard instance;
     public static Blackboard Instance
@@ -54,14 +57,14 @@ public class Blackboard : MonoBehaviour
         }
     }
 
-    public GameObject RegisterPatrol(GameObject p)
+    public bool RegisterPatrol(GameObject p)
     {
-        if(patrol == null) patrol = p;
-        return patrol;
+        patrons.Push(p);
+        return true;
     }
 
     public void DeregisterPatrol()
     {
-        patrol = null;
+        //patrons.Pop();
     }
 }
