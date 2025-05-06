@@ -17,6 +17,11 @@ public class DepSequence : Node
         if(dependancy.Process() == Status.FAILURE)
         {
             agent.ResetPath();
+            // Reset trạng thái của BTAgent về IDLE
+            if (agent.gameObject.TryGetComponent<BTAgent>(out var btAgent))
+            {
+                btAgent.state = BTAgent.ActionState.IDLE;
+            }
             foreach(Node n in children)
             {
                 n.Reset();

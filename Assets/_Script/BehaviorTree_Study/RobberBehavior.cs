@@ -36,12 +36,12 @@ public class RobberBehavior : BTAgent
         base.Start();
           
         Leaf goToDiamond = new Leaf("Go To Diamond", GoToDiamond, 1);
-        Leaf goToPainting = new Leaf("Go To Diamond", GoToPainting, 2);
+        Leaf goToPainting = new Leaf("Go To Painting", GoToPainting, 2);
         Leaf hasGotMoney = new Leaf("Has Got Money", HasMoney);
 
-        Leaf goToArt1 = new Leaf("Go To Art 1", GoToArt1);
-        Leaf goToArt2 = new Leaf("Go To Art 2", GoToArt2);
-        Leaf goToArt3 = new Leaf("Go To Art 3", GoToArt3);
+        // Leaf goToArt1 = new Leaf("Go To Art 1", GoToArt1);
+        // Leaf goToArt2 = new Leaf("Go To Art 2", GoToArt2);
+        // Leaf goToArt3 = new Leaf("Go To Art 3", GoToArt3);
 
         RSelector selectObject = new RSelector("Select Object To Steal");
         for(int i = 0; i < art.Length; i++)
@@ -65,11 +65,13 @@ public class RobberBehavior : BTAgent
         opendoor.AddChild(goToFrontDoor);
         opendoor.AddChild(goToBackDoor);
 
+        runAway.AddChild(canSee);
+        runAway.AddChild(flee);
+
         Inverter cantSeeCop = new Inverter("Cant See Cop?");
         cantSeeCop.AddChild(canSee);
 
-        runAway.AddChild(canSee);
-        runAway.AddChild(flee);
+        
         
         // steal.AddChild(invertMoney);
         // steal.AddChild(opendoor); // Chọn cửa để vào
@@ -101,7 +103,7 @@ public class RobberBehavior : BTAgent
         conditions.AddChild(cantSeeCop);
         conditions.AddChild(invertMoney);
         stealConditions.AddChild(conditions);
-        DepSequence steal = new DepSequence("Steal Something", stealConditions,agent);
+        DepSequence steal = new DepSequence("Steal Something", stealConditions, agent);
         //steal.AddChild(invertMoney);
         steal.AddChild(opendoor);
         steal.AddChild(selectObject);
@@ -270,21 +272,21 @@ public class RobberBehavior : BTAgent
         //return Node.Status.SUCCESS;
     }
 
-    public Node.Status GoToDoor(GameObject door)
-    {
-        Node.Status s = GotoLocation(door.transform.position);
-        if (s == Node.Status.SUCCESS)
-        {
-            if (!door.GetComponent<Lock>().isLocked)
-            {
-                //door.SetActive(false);
-                door.GetComponent<NavMeshObstacle>().enabled = false;
-                return Node.Status.SUCCESS;
-            }
-            return Node.Status.FAILURE;
-        }
-        else return s; //Thông thường mà chưa tới nơi, nó sẽ trả ra RUNNING
-    }
+    // public Node.Status GoToDoor(GameObject door)
+    // {
+    //     Node.Status s = GotoLocation(door.transform.position);
+    //     if (s == Node.Status.SUCCESS)
+    //     {
+    //         if (!door.GetComponent<Lock>().isLocked)
+    //         {
+    //             //door.SetActive(false);
+    //             door.GetComponent<NavMeshObstacle>().enabled = false;
+    //             return Node.Status.SUCCESS;
+    //         }
+    //         return Node.Status.FAILURE;
+    //     }
+    //     else return s; //Thông thường mà chưa tới nơi, nó sẽ trả ra RUNNING
+    // }
 
     public Node.Status GoToVan()
     {
@@ -292,10 +294,14 @@ public class RobberBehavior : BTAgent
         //this.agent.SetDestination(this.van.transform.position);
         //return Node.Status.SUCCESS;
         Node.Status s = GotoLocation(this.van.transform.position);
-        if (s == Node.Status.SUCCESS)
+        if (s == Node.Status.SUCCESS) 
         {
-            money += 300;
-            pickup.SetActive(false);
+            if (pickup != null) 
+            {
+                money += 300;
+                pickup.SetActive(false);
+                pickup = null;
+            }
         }
         return s;
     }

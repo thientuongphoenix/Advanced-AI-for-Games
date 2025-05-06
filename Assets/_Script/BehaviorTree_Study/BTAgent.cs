@@ -91,6 +91,22 @@ public class BTAgent : MonoBehaviour
         return Node.Status.RUNNING;
     }
 
+    public Node.Status GoToDoor(GameObject door)
+    {
+        Node.Status s = GotoLocation(door.transform.position);
+        if (s == Node.Status.SUCCESS)
+        {
+            if (!door.GetComponent<Lock>().isLocked)
+            {
+                //door.SetActive(false);
+                door.GetComponent<NavMeshObstacle>().enabled = false;
+                return Node.Status.SUCCESS;
+            }
+            return Node.Status.FAILURE;
+        }
+        else return s; //Thông thường mà chưa tới nơi, nó sẽ trả ra RUNNING
+    }
+
     /// <summary>
     /// Hàm dùng để hạn chế bớt tầng xuất cập nhật BTree
     /// </summary>
