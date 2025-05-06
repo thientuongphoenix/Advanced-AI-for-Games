@@ -96,10 +96,13 @@ public class RobberBehavior : BTAgent
         // steal.AddChild(s2);
         // steal.AddChild(s3);
         // steal.AddChild(s4);
-        BehaviorTree seeCop = new BehaviorTree();
-        seeCop.AddChild(cantSeeCop);
-        DepSequence steal = new DepSequence("Steal Something", seeCop,agent);
-        steal.AddChild(invertMoney);
+        BehaviorTree stealConditions = new BehaviorTree();
+        Sequence conditions = new Sequence("Stealing Conditions");
+        conditions.AddChild(cantSeeCop);
+        conditions.AddChild(invertMoney);
+        stealConditions.AddChild(conditions);
+        DepSequence steal = new DepSequence("Steal Something", stealConditions,agent);
+        //steal.AddChild(invertMoney);
         steal.AddChild(opendoor);
         steal.AddChild(selectObject);
         steal.AddChild(goToVan);
@@ -112,6 +115,24 @@ public class RobberBehavior : BTAgent
         this.tree.AddChild(beThief); // Thêm tất cả vào node gốc
 
         this.tree.PrintTree();
+
+        // Debug.Log("Cây hành vi của tên trộm:");
+        // Debug.Log("Root");
+        // Debug.Log("└── Be a Thief (Selector)");
+        // Debug.Log("    ├── Steal Something (DepSequence)");
+        // Debug.Log("    │   ├── Stealing Conditions (Sequence)");
+        // Debug.Log("    │   │   ├── Can't See Cop (Sequence)");
+        // Debug.Log("    │   │   │   └── Can See Cop? (Leaf)");
+        // Debug.Log("    │   │   └── Has No Money (Inverter)");
+        // Debug.Log("    │   │       └── Has Money? (Leaf)");
+        // Debug.Log("    │   ├── Open Door (Leaf)");
+        // Debug.Log("    │   ├── Select Object (Selector)");
+        // Debug.Log("    │   │   ├── Go To Diamond (Leaf)");
+        // Debug.Log("    │   │   └── Go To Painting (Leaf)");
+        // Debug.Log("    │   └── Go To Van (Leaf)");
+        // Debug.Log("    └── Run Away (Sequence)");
+        // Debug.Log("        ├── Can See Cop? (Leaf)");
+        // Debug.Log("        └── Flee From Cop (Leaf)");
     }
 
     public Node.Status CanSeeCop()
@@ -126,6 +147,7 @@ public class RobberBehavior : BTAgent
 
     public Node.Status HasMoney()
     {
+        Debug.Log("HasMoney: money = " + this.money);
         if (this.money < 500) return Node.Status.FAILURE;
         return Node.Status.SUCCESS;
     }

@@ -11,6 +11,7 @@ public class Inverter : Node
     public override Status Process()
     {
         Status childstatus = children[0].Process(); //Chỉ đảo 1 node con duy nhất
+        Debug.Log("Inverter: childStatus = " + childstatus);
         //Đảo ngược trạng thái node
         if(childstatus == Status.RUNNING) return Status.RUNNING;
         if(childstatus == Status.FAILURE) return Status.SUCCESS;
