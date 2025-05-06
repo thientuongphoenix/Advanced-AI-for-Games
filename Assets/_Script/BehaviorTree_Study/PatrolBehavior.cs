@@ -28,7 +28,15 @@ public class PatrolBehavior : BTAgent
         Sequence viewArt = new Sequence("View Art");
         viewArt.AddChild(isBored);
         viewArt.AddChild(goToFrontDoor);
-        viewArt.AddChild(selectObject);
+
+        BehaviorTree whileBored = new BehaviorTree();
+        whileBored.AddChild(isBored);
+
+        Loop lookAtPainting = new Loop("Look", whileBored);
+        lookAtPainting.AddChild(selectObject);
+
+        viewArt.AddChild(lookAtPainting);
+
         viewArt.AddChild(goToHome);
 
         Selector bePatrol = new Selector("Be A Patrol");
@@ -54,7 +62,7 @@ public class PatrolBehavior : BTAgent
         Node.Status s = GotoLocation(this.art[i].transform.position);
         if(s == Node.Status.SUCCESS)
         {
-            this.boredom = Mathf.Clamp(this.boredom - 500, 0, 1000);
+            this.boredom = Mathf.Clamp(this.boredom - 150, 0, 1000);
         }
         return s;
     }
