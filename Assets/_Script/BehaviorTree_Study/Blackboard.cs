@@ -53,7 +53,7 @@ public class Blackboard : MonoBehaviour
             timeOfDay++;
             if(timeOfDay > 23) timeOfDay = 0;
             clock.text = timeOfDay + " : 00";
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
         }
     }
 
