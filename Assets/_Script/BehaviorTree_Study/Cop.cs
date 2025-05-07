@@ -3,6 +3,7 @@ using UnityEngine;
 public class Cop : BTAgent
 {
     public GameObject[] patrolPoints;
+    public GameObject robber;
 
     public override void Start()
     {
@@ -15,12 +16,49 @@ public class Cop : BTAgent
             selectPatrolPoint.AddChild(pp);
         }
 
-        tree.AddChild(selectPatrolPoint);
+        Sequence chaseRobber = new Sequence("Chase");
+        Leaf canSee = new Leaf("Can See Robber", CanSeeRobber);
+        Leaf chase = new Leaf("Chase Robber", ChaseRobber);
+
+        chaseRobber.AddChild(canSee);
+        chaseRobber.AddChild(chase);
+
+        Inverter cantSeeRobber = new Inverter("Cant See Robber");
+        cantSeeRobber.AddChild(canSee);
+
+        BehaviorTree patrolConditions = new BehaviorTree();
+        Sequence condition = new Sequence("Patrol Conditions");
+        condition.AddChild(cantSeeRobber);
+        patrolConditions.AddChild(condition);
+        DepSequence patrol = new DepSequence("Patrol Until", patrolConditions, agent);
+        patrol.AddChild(selectPatrolPoint);
+
+        Selector beCop = new Selector("Be A Cop");
+        beCop.AddChild(patrol);
+        beCop.AddChild(chaseRobber);
+
+        tree.AddChild(beCop);
     }
 
     public Node.Status GoToPoint(int i)
     {
         Node.Status s = GotoLocation(patrolPoints[i].transform.position);
         return s;
+    }
+
+    public Node.Status CanSeeRobber()
+    {
+        return CanSee(robber.transform.position, "Robber", 5, 60);
+    }
+
+    Vector3 rl; //Remember location
+    public Node.Status ChaseRobber()
+    {
+        float chaseDistance = 10;
+        if(state == ActionState.IDLE)
+        {
+            rl = this.transform.position - (transform.position - robber.transform.position).normalized * chaseDistance;
+        }
+        return GotoLocation(rl);
     }
 }
