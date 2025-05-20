@@ -29,6 +29,19 @@ public class Worker : BTAgent
         beWorker.AddChild(goToOffice);
 
         tree.AddChild(beWorker);
+
+        tree.PrintTree();
+
+        // Cây hành vi của nhân viên:
+        // Root
+        // └── Be A Worker (Selector)
+        //     ├── Find a Patron (Sequence)
+        //     │   ├── Allocate Patron (Leaf)
+        //     │   └── Move To Patron (DepSequence)
+        //     │       ├── Is Patron Waiting (BehaviorTree)
+        //     │       │   └── Is Patron Waiting (Leaf)
+        //     │       └── Go To Patron (Leaf)
+        //     └── Go To Office (Leaf)
     }
 
     public Node.Status PatronWaiting()

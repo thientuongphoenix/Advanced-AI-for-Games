@@ -67,6 +67,32 @@ public class PatronBehavior : BTAgent
         tree.AddChild(viewArtWithFallback);
 
         StartCoroutine("IncreaseBoredom");
+
+        tree.PrintTree();
+
+        // Cây hành vi của khách tham quan:
+        // Root
+        // └── View Art With Fallback (Selector)
+        //     ├── Be A Patron (DepSequence)
+        //     │   ├── Gallery Open Condition (BehaviorTree)
+        //     │   │   └── Is Open? (Leaf)
+        //     │   └── View Art (Sequence)
+        //     │       ├── Is Open? (Leaf)
+        //     │       ├── Is Bored? (Leaf)
+        //     │       ├── Go To Frontdoor (Leaf)
+        //     │       ├── Ticket (Loop)
+        //     │       │   ├── Wait For Ticket (BehaviorTree)
+        //     │       │   │   └── Wait For Ticket (Leaf)
+        //     │       │   └── Waiting For Worker (Leaf)
+        //     │       ├── Look (Loop)
+        //     │       │   ├── While Bored (BehaviorTree)
+        //     │       │   │   └── Is Bored? (Leaf)
+        //     │       │   └── Select Object (RSelector)
+        //     │       │       ├── Go To Art 1 (Leaf)
+        //     │       │       ├── Go To Art 2 (Leaf)
+        //     │       │       └── Go To Art N (Leaf)
+        //     │       └── Go To Home (Leaf)
+        //     └── Go To Home (Leaf)
     }
 
     IEnumerator IncreaseBoredom()

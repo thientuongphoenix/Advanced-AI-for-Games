@@ -38,6 +38,23 @@ public class Cop : BTAgent
         beCop.AddChild(chaseRobber);
 
         tree.AddChild(beCop);
+
+        tree.PrintTree();
+
+        // Cây hành vi của cảnh sát:
+        // Root
+        // └── Be A Cop (Selector)
+        //     ├── Patrol Until (DepSequence)
+        //     │   ├── Patrol Conditions (Sequence)
+        //     │   │   └── Can't See Robber (Inverter)
+        //     │   │       └── Can See Robber (Leaf)
+        //     │   └── Select Patrol Point (Sequence)
+        //     │       ├── Go to Point 1 (Leaf)
+        //     │       ├── Go to Point 2 (Leaf)
+        //     │       └── Go to Point N (Leaf)
+        //     └── Chase (Sequence)
+        //         ├── Can See Robber (Leaf)
+        //         └── Chase Robber (Leaf)
     }
 
     public Node.Status GoToPoint(int i)
